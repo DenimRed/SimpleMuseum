@@ -32,6 +32,9 @@ import java.util.function.Supplier;
 
 import denimred.simplemuseum.common.entity.MuseumPuppetEntity;
 
+// TODO: This packet is vulnerable to abuse by malicious clients. Determine a way to make this
+//       packet safer without sacrificing functionality.
+/** Tells the server to move a puppet to a particular position. */
 public class C2SMovePuppet {
     private final UUID uuid;
     private final Vector3d pos;
@@ -77,7 +80,6 @@ public class C2SMovePuppet {
                 if (puppet.isAlive()
                         && world.isBlockLoaded(new BlockPos(puppet.getPositionVec()))
                         && world.isBlockLoaded(new BlockPos(pos))) {
-                    // TODO: Do permissions check?
                     puppet.setLocationAndAngles(
                             pos.x, pos.y, pos.z, MathHelper.wrapDegrees(yaw), puppet.rotationPitch);
                 }

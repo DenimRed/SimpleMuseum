@@ -29,6 +29,9 @@ import java.util.function.Supplier;
 
 import denimred.simplemuseum.common.entity.MuseumPuppetEntity;
 
+// TODO: This packet is vulnerable to abuse by malicious clients. Determine a way to make this
+//       packet safer without sacrificing functionality.
+/** Used by our CryptMaster integration to delete puppets using their tools. */
 public class C2SCryptMasterRemovePuppet {
     private final UUID uuid;
 
@@ -59,7 +62,6 @@ public class C2SCryptMasterRemovePuppet {
             final Entity entity = world.getEntityByUuid(uuid);
             if (entity instanceof MuseumPuppetEntity) {
                 if (world.isBlockLoaded(entity.getPosition()) && entity.isAlive()) {
-                    // TODO: Do permissions check?
                     entity.remove();
                 }
             }

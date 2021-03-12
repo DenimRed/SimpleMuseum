@@ -19,12 +19,15 @@
 package denimred.simplemuseum.common.network;
 
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.Optional;
+
+import javax.annotation.Nullable;
 
 import denimred.simplemuseum.client.util.ClientUtil;
 import denimred.simplemuseum.common.entity.MuseumPuppetEntity;
@@ -54,5 +57,18 @@ public final class NetworkUtil {
             }
         }
         return Optional.empty();
+    }
+
+    @Nullable
+    public static CommandSource getCommonPlayerCommandSource(NetworkEvent.Context ctx) {
+        if (ctx.getDirection().getReceptionSide().isServer()) {
+            final ServerPlayerEntity sender = ctx.getSender();
+            if (sender != null) {
+                return sender.getCommandSource();
+            }
+        } else if (ClientUtil.MC.player != null) {
+            return ClientUtil.MC.player.getCommandSource();
+        }
+        return null;
     }
 }

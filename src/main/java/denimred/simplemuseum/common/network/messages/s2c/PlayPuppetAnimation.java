@@ -28,6 +28,7 @@ import java.util.function.Supplier;
 
 import denimred.simplemuseum.common.network.NetworkUtil;
 
+/** Sent to clients to notify them that a particular puppet needs to play an animation. */
 public final class PlayPuppetAnimation {
     private final int puppetId;
     private final String animation;

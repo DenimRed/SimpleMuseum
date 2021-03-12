@@ -29,6 +29,7 @@ import java.util.function.Supplier;
 import denimred.simplemuseum.common.entity.MuseumPuppetEntity;
 import denimred.simplemuseum.common.network.NetworkUtil;
 
+/** Sent to clients to notify them that a puppet has been resurrected by the server. */
 public final class ResurrectPuppetSync {
     private final int puppetId;
 

@@ -30,6 +30,9 @@ import java.util.function.Supplier;
 
 import denimred.simplemuseum.common.entity.MuseumPuppetEntity;
 
+// TODO: This packet is vulnerable to abuse by malicious clients. Determine a way to make this
+//       packet safer without sacrificing functionality.
+/** Tells the server to configure a puppet with the given settings. */
 @Deprecated // Need to update the UI before we can get rid of this
 public class C2SConfigurePuppet {
     private final UUID uuid;

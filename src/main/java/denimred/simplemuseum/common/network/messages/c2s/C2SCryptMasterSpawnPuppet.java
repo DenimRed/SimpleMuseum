@@ -29,6 +29,9 @@ import java.util.function.Supplier;
 
 import denimred.simplemuseum.common.entity.MuseumPuppetEntity;
 
+// TODO: This packet is vulnerable to abuse by malicious clients. Determine a way to make this
+//       packet safer without sacrificing functionality.
+/** Used by our CryptMaster integration to spawn puppets using their tools. */
 public class C2SCryptMasterSpawnPuppet {
     private final Vector3d pos;
 
@@ -61,7 +64,6 @@ public class C2SCryptMasterSpawnPuppet {
         if (sender != null) {
             final ServerWorld world = sender.getServerWorld();
             if (world.isBlockLoaded(new BlockPos(pos))) {
-                // TODO: Do permissions check?
                 MuseumPuppetEntity.spawn(world, pos, sender.getPositionVec());
             }
         }
