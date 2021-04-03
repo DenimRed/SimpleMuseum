@@ -117,6 +117,7 @@ dependencies {
 ext {
     license {
         header = file("$rootDir/LICENSE_HEADER")
+        newLine = false
 
         ext {
             year = new Date().format("yyyy")
