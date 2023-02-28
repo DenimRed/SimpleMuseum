@@ -7,11 +7,12 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.Mth;
-import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
+import net.minecraftforge.client.gui.widget.ExtendedButton;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -134,7 +135,7 @@ public class ConfirmPopupWidget extends AbstractWidget {
     }
 
     public ConfirmPopupWidget title(Component title) {
-        this.message = title;
+        this.setMessage(title);
         this.titleLabel.setTexts(title);
         return this;
     }
@@ -178,7 +179,7 @@ public class ConfirmPopupWidget extends AbstractWidget {
     }
 
     public ConfirmPopupWidget challenge(Component title) {
-        this.message = title;
+        this.setMessage(title);
         this.challengeLabel.setTexts(title);
         return this;
     }
@@ -229,7 +230,7 @@ public class ConfirmPopupWidget extends AbstractWidget {
     @SuppressWarnings("deprecation")
     @Override
     public void renderButton(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, alpha);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha);
         RenderSystem.enableDepthTest();
         RenderSystem.enableBlend();
         fillGradient(poseStack, x, y, x + width, y + height, 0x66FFFFFF, 0x66FFFFFF);
@@ -327,5 +328,10 @@ public class ConfirmPopupWidget extends AbstractWidget {
             return super.isMouseOver(mouseX, mouseY);
         }
         return false;
+    }
+
+    @Override
+    public void updateNarration(NarrationElementOutput narrationElementOutput) {
+        // no-op
     }
 }

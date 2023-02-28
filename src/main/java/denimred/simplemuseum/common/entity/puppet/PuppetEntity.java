@@ -27,7 +27,6 @@ import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -58,6 +57,7 @@ import denimred.simplemuseum.common.util.GlowColor;
 import denimred.simplemuseum.common.util.IValueSerializer;
 import denimred.simplemuseum.common.util.MathUtil;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceLinkedOpenHashMap;
+import net.minecraftforge.network.PacketDistributor;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimationTickable;
 import software.bernie.geckolib3.core.manager.AnimationData;
@@ -296,7 +296,7 @@ public final class PuppetEntity extends LivingEntity implements IAnimatable, IAn
     @Override
     public void kill() {
         if (!this.isDamageable()) {
-            this.remove();
+            this.remove(RemovalReason.KILLED);
         } else {
             super.kill();
         }
@@ -305,7 +305,7 @@ public final class PuppetEntity extends LivingEntity implements IAnimatable, IAn
     @Override
     public void die(DamageSource cause) {
         if (this.isCompletelyDead() && cause == DamageSource.OUT_OF_WORLD) {
-            this.remove();
+            this.remove(RemovalReason.KILLED);
         } else {
             super.die(cause);
         }
@@ -340,8 +340,7 @@ public final class PuppetEntity extends LivingEntity implements IAnimatable, IAn
     }
 
     public boolean exists() {
-        //noinspection deprecation
-        return !removed;
+        return !isRemoved();
     }
 
     public boolean isDead() {
@@ -405,7 +404,7 @@ public final class PuppetEntity extends LivingEntity implements IAnimatable, IAn
             final ItemStack stack = player.getMainHandItem();
             if (stack.getItem() instanceof CuratorsCaneItem) {
                 if (!level.isClientSide) {
-                    this.remove();
+                    this.remove(RemovalReason.KILLED);
                 }
                 level.playSound(
                         null,
@@ -423,9 +422,8 @@ public final class PuppetEntity extends LivingEntity implements IAnimatable, IAn
     }
 
     @Override
-    protected SoundEvent getFallDamageSound(int heightIn) {
-        // TODO: Make this configurable
-        return SoundEvents.ARMOR_STAND_FALL;
+    public Fallsounds getFallSounds() {
+        return new Fallsounds(SoundEvents.ARMOR_STAND_FALL, SoundEvents.ARMOR_STAND_FALL);
     }
 
     @Override
@@ -509,7 +507,7 @@ public final class PuppetEntity extends LivingEntity implements IAnimatable, IAn
         if (Double.isNaN(d0)) {
             d0 = 1.0D;
         }
-        d0 = d0 * 64.0D * viewScale;
+        d0 = d0 * 64.0D * getViewScale();
         return distance < d0 * d0;
     }
 
@@ -519,8 +517,8 @@ public final class PuppetEntity extends LivingEntity implements IAnimatable, IAn
     }
 
     @Override
-    public boolean isGlowing() {
-        return super.isGlowing() || level.isClientSide && ClientUtil.shouldPuppetGlow(this);
+    public boolean isCurrentlyGlowing() {
+        return super.isCurrentlyGlowing() || level.isClientSide && ClientUtil.shouldPuppetGlow(this);
     }
 
     @Override

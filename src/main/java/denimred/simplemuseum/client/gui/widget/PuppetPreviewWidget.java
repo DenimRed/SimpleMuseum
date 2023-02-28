@@ -3,12 +3,15 @@ package denimred.simplemuseum.client.gui.widget;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Matrix4f;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -277,23 +280,15 @@ public class PuppetPreviewWidget extends AbstractWidget {
         fillGradient(poseStack, x, y, x + width, y + height, 0x66000000, 0xCC000000);
 
         // We reset the projection matrix here in order to change the clip plane distances
-        RenderSystem.pushMatrix();
-        RenderSystem.matrixMode(GL11.GL_PROJECTION);
-        RenderSystem.loadIdentity();
-        RenderSystem.ortho(
-                0.0D,
-                (double) window.getWidth() / guiScale,
-                (double) window.getHeight() / guiScale,
-                0.0D,
-                10.0D,
-                300000.0D);
-        RenderSystem.matrixMode(GL11.GL_MODELVIEW);
-        RenderSystem.loadIdentity();
-        RenderSystem.translatef(0.0F, 0.0F, -2000.0F);
-
-        RenderSystem.translatef(
-                x + (width / 2.0F) + previewX, y + (height / 2.0F) + previewY, 0.0F);
-        RenderSystem.scalef(1.0F, 1.0F, -1.0F);
+        PoseStack mvs = RenderSystem.getModelViewStack();
+        RenderSystem.backupProjectionMatrix();
+        Matrix4f ortho = Matrix4f.orthographic(0.0F, (float) (window.getWidth() / guiScale), 0.0F, (float) (window.getHeight() / guiScale), 10.0F, 300000.0F);
+        RenderSystem.setProjectionMatrix(ortho);
+        mvs.pushPose();
+        mvs.setIdentity();
+        mvs.translate(0.0F, 0.0F, -2000.0F);
+        mvs.translate(x + (width / 2.0F) + previewX, y + (height / 2.0F) + previewY, 0.0F);
+        mvs.scale(1.0F, 1.0F, -1.0F);
         final PoseStack entityPS = new PoseStack();
         entityPS.translate(0.0D, 0.0D, -400.0D);
         // This is me trying to make some scale to fit thing... poorly
@@ -319,7 +314,7 @@ public class PuppetPreviewWidget extends AbstractWidget {
             entityPS.pushPose();
             entityPS.translate(-0.5F, yOff - 1.0F, -0.5F);
             MC.getBlockRenderer()
-                    .renderBlock(
+                    .renderSingleBlock(
                             Blocks.GRASS_BLOCK.defaultBlockState(),
                             entityPS,
                             buffers,
@@ -355,7 +350,7 @@ public class PuppetPreviewWidget extends AbstractWidget {
                 entityPS.pushPose();
                 entityPS.translate(xOff - 0.5F, yOff - 1.0F, -0.5F);
                 MC.getBlockRenderer()
-                        .renderBlock(
+                        .renderSingleBlock(
                                 Blocks.GRASS_BLOCK.defaultBlockState(),
                                 entityPS,
                                 buffers,
@@ -385,7 +380,9 @@ public class PuppetPreviewWidget extends AbstractWidget {
         dispatcher.setRenderShadow(true);
 
         buffers.endBatch();
-        RenderSystem.popMatrix();
+        mvs.popPose();
+        RenderSystem.applyModelViewMatrix();
+        RenderSystem.restoreProjectionMatrix();
         ScissorUtil.stop();
 
         poseStack.pushPose();
@@ -471,5 +468,10 @@ public class PuppetPreviewWidget extends AbstractWidget {
             }
         }
         return super.isMouseOver(mouseX, mouseY);
+    }
+
+    @Override
+    public void updateNarration(NarrationElementOutput narrationElementOutput) {
+        // no-op
     }
 }

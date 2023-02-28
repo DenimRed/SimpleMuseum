@@ -8,17 +8,16 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.AABB;
-
-import java.awt.Color;
 
 import javax.annotation.Nullable;
 
 import denimred.simplemuseum.client.renderer.entity.layer.PuppetBannersLayerRenderer;
 import denimred.simplemuseum.common.entity.puppet.PuppetEntity;
 import denimred.simplemuseum.common.entity.puppet.manager.PuppetRenderManager.NameplateBehavior;
+import software.bernie.geckolib3.core.util.Color;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
 import software.bernie.geckolib3.geo.render.built.GeoCube;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
@@ -26,8 +25,8 @@ import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 import software.bernie.geckolib3.util.RenderUtils;
 
 public class PuppetRenderer extends GeoEntityRenderer<PuppetEntity> {
-    public PuppetRenderer(EntityRenderDispatcher dispatcher) {
-        super(dispatcher, new PuppetModel());
+    public PuppetRenderer(Context context) {
+        super(context, new PuppetModel());
         this.addLayer(new PuppetBannersLayerRenderer(this, 16, 1.0D));
     }
 
@@ -275,11 +274,11 @@ public class PuppetRenderer extends GeoEntityRenderer<PuppetEntity> {
         if (puppet.easterEggs.isActive(ERROR)) {
             final float b =
                     ((float) Math.sin(puppet.level.getGameTime() / 3.0D) + 1.0F) / 3.34F + 0.4F;
-            return Color.getHSBColor(0.0F, 1.0F, b);
+            return Color.ofHSB(0.0F, 1.0F, b);
         } else {
             final Color color = Color.WHITE; // puppet.renderManager.tintColor.get();
             if (puppet.renderManager.canRenderHiddenDeathEffects()) {
-                return new Color(
+                return Color.ofRGBA(
                         color.getRed(),
                         color.getGreen() / 3,
                         color.getBlue() / 3,
