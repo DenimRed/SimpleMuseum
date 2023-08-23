@@ -27,6 +27,7 @@ public class MuseumLanguageProvider extends LanguageProvider {
         // Lang for registry objects
         this.addEntityType(MuseumEntities.MUSEUM_PUPPET, "Museum Puppet");
         this.addItem(MuseumItems.CURATORS_CANE, "Curator's Cane");
+        this.addItem(MuseumItems.MOVEMENT_MALLET, "Movement Mallet (WIP)");
         // Gui lang
         for (GuiLang lang : GuiLang.values()) {
             lang.provide(this);
@@ -147,6 +148,10 @@ public class MuseumLanguageProvider extends LanguageProvider {
                 PuppetBehaviorManager.PHYSICAL_SIZE,
                 "Physical Size",
                 "Determines the physical width and height of the puppet. Used for the collision box and other gameplay logic; doesn't affect its appearance.");
+        this.addValueProvider(
+                PuppetBehaviorManager.GOAL_TREE,
+                "AI Goal Tree",
+                "TODO Add This :)");
         // Mod compat lang (datagen is done in dev, no need to worry about classloading)
         this.addCryptMasterTool(MuseumTool.INSTANCE, "Create/Edit Museum Puppet");
     }
